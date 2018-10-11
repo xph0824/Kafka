@@ -1,0 +1,45 @@
+环境说明：（https://blog.csdn.net/u013713010/article/details/68947679）
+
+1：首先php要有kafka扩展，在命令行中输入 php -m  看是否有rdkafka 
+
+没有的话需要安装配置下：
+
+--------------- kafka php客户端安装(php-rdkafka) --------------
+1.安装 librdkafka
+cd /usr/local
+git clone https://github.com/edenhill/librdkafka
+cd librdkafka
+./configure		#配置
+make  #编译
+make install  #安装
+
+2.安装php-rdkafka
+cd /usr/local
+git clone https://github.com/arnaud-lb/php-rdkafka.git
+cd php-rdkafka
+/usr/local/php/bin/phpize  #加载php扩展模块
+./configure --enable-kafka --with-php-config=/usr/local/php/bin/php-config		#配置
+make  #编译
+make install  #安装
+
+vi /usr/local/lib/php.ini或者/usr/local/php/etc/php.ini
+加入 extension=rdkafka.so
+php -m  看是否有rdkafka 
+
+
+
+
+2. ?期间遇到几个坑 ?前边的步骤都做完后 发现就是扩展没有正常加载上 ，很奇葩 后来看了 php的错误日志 是找不到librdkafka.so.1这个文件，librdkafka安装都是正常的， 百度后 找到了解决方法
+php加载?librdkafka的时候 会在?/usr/lib/下找对应的文件 没有找到回报错，所以加个软链是最简单的方法
+
+ln -s /usr/local/lib/librdkafka.so.1 /usr/lib/
+
+加了软链后记得一定 更新软链才会生效
+
+ldconfig
+
+然后再重启php-fpm 一切都ok啦 ~~ 。
+
+---------------------
+
+本文来自 u013713010 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/u013713010/article/details/68947679?utm_source=copy 
